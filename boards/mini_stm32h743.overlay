@@ -1,0 +1,52 @@
+/ {
+    aliases {
+		spi1 = &spi1;
+		spi2 = &spi2;
+		quadspi = &quadspi;
+    };
+};
+
+&quadspi{
+	#size-cells = <0>;
+};
+
+&spi1{
+	#size-cells = <0>;
+};
+
+&spi2 {
+	status = "okay";
+	pinctrl-0 = <&spi2_sck_pd3
+				 &spi2_miso_pc2_c
+				 &spi2_mosi_pc3_c>;
+	pinctrl-names = "default";
+	cs-gpios = <&gpiod 4 GPIO_ACTIVE_LOW>,
+               <&gpiod 5 GPIO_ACTIVE_LOW>;
+	clock-frequency = <10000000>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	
+	bmi08x_accel: bmi08x@0 {
+		compatible = "bosch,bmi08x-accel";
+		reg = <0>;
+		int-gpios = <&gpioc 0 GPIO_ACTIVE_LOW>;
+		spi-max-frequency = <10000000>;
+		int1-map-io = <0x01>;
+		int2-map-io = <0x00>;
+		int1-conf-io = <0x00>;
+		int2-conf-io = <0x00>;
+		accel-hz = "800";
+		accel-fs = <24>;
+	};
+
+	bmi08x_gyro: bmi08x@1 {
+		compatible = "bosch,bmi08x-gyro";
+		reg = <1>;
+		int-gpios = <&gpioc 1 GPIO_ACTIVE_LOW>;
+		spi-max-frequency = <10000000>;
+		int3-4-map-io = <0x01>;
+		int3-4-conf-io = <0x00>;
+		gyro-hz = "1000_116";
+		gyro-fs = <1000>;
+	};
+};
