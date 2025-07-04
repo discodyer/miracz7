@@ -1,17 +1,12 @@
+#include <zephyr/dt-bindings/sensor/qdec_stm32.h>
+
 / {
     aliases {
 		spi1 = &spi1;
 		spi2 = &spi2;
-		quadspi = &quadspi;
+		encoder1 = &qdec1;
+        encoder2 = &qdec2;
     };
-};
-
-&quadspi{
-	#size-cells = <0>;
-};
-
-&spi1{
-	#size-cells = <0>;
 };
 
 &spi2 {
@@ -49,4 +44,48 @@
 		gyro-hz = "1000_116";
 		gyro-fs = <1000>;
 	};
+};
+
+// &timers1 {
+//     status = "okay";
+
+//     encoder1: encoder {
+//         label = "TIM1_ENCODER";
+//         compatible = "st,stm32-encoder";
+//         pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch2_pe11>;
+// 		pinctrl-names = "default";
+// 		st,encoder-mode = <3>;
+//         st,input-filter-level = <NO_FILTER>;
+// 		st,counts-per-revolution = <2000>;
+// 		st,input-polarity-inverted;
+//         status = "okay";
+//     };
+// };
+
+&timers2 {
+    status = "okay";
+    qdec1: qdec {
+		status = "okay";
+		compatible = "st,stm32-qdec";
+        pinctrl-0 = <&tim2_ch1_pa15 &tim2_ch2_pb3>;
+        pinctrl-names = "default";
+        st,encoder-mode = <3>;
+        st,input-polarity-inverted;
+        st,input-filter-level = <NO_FILTER>;
+        st,counts-per-revolution = <2000>;
+    };
+};
+
+&timers3 {
+    status = "okay";
+    qdec2: qdec {
+		status = "okay";
+		compatible = "st,stm32-qdec";
+        pinctrl-0 = <&tim3_ch1_pc6 &tim3_ch2_pc7>;
+        pinctrl-names = "default";
+        st,encoder-mode = <3>;
+        st,input-polarity-inverted;
+        st,input-filter-level = <NO_FILTER>;
+        st,counts-per-revolution = <2000>;
+    };
 };
