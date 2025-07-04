@@ -14,3 +14,7 @@ __pycache__/
 
 # docs
 /doc/_build*
+zephyrproject/
+zephyr-sdk/
+build/
+zephyr-toolchain*
