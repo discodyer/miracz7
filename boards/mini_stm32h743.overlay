@@ -4,8 +4,8 @@
     aliases {
 		spi1 = &spi1;
 		spi2 = &spi2;
-		encoder1 = &qdec1;
-        encoder2 = &qdec2;
+		encoder1 = &encoder1;
+        encoder2 = &encoder2;
     };
 };
 
@@ -56,7 +56,7 @@
 // 		pinctrl-names = "default";
 // 		st,encoder-mode = <3>;
 //         st,input-filter-level = <NO_FILTER>;
-// 		st,counts-per-revolution = <2000>;
+// 		st,counts-per-revolution = <500>;
 // 		st,input-polarity-inverted;
 //         status = "okay";
 //     };
@@ -64,28 +64,28 @@
 
 &timers2 {
     status = "okay";
-    qdec1: qdec {
+    encoder1: encoder {
 		status = "okay";
-		compatible = "st,stm32-qdec";
+		compatible = "st,stm32-encoder";
         pinctrl-0 = <&tim2_ch1_pa15 &tim2_ch2_pb3>;
         pinctrl-names = "default";
         st,encoder-mode = <3>;
         st,input-polarity-inverted;
         st,input-filter-level = <NO_FILTER>;
-        st,counts-per-revolution = <2000>;
+        st,counts-per-revolution = <15000>;
     };
 };
 
 &timers3 {
     status = "okay";
-    qdec2: qdec {
+    encoder2: encoder {
 		status = "okay";
-		compatible = "st,stm32-qdec";
+		compatible = "st,stm32-encoder";
         pinctrl-0 = <&tim3_ch1_pc6 &tim3_ch2_pc7>;
         pinctrl-names = "default";
         st,encoder-mode = <3>;
         st,input-polarity-inverted;
         st,input-filter-level = <NO_FILTER>;
-        st,counts-per-revolution = <2000>;
+        st,counts-per-revolution = <15000>;
     };
 };

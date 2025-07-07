@@ -1,1 +1,1 @@
-add_subdirectory_ifdef(CONFIG_ENCODER encoder)
+add_subdirectory_ifdef(CONFIG_ENCODER_STM32 encoder)

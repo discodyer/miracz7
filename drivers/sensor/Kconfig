@@ -1,1 +1,1 @@
-rsource "st/Kconfig"
+rsource "encoder/Kconfig"

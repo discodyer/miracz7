@@ -2,6 +2,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/drivers/sensor/encoder_stm32.h>
 
 int main(void)
 {
@@ -17,15 +18,8 @@ int main(void)
         return 0;
     }
 
-    /* 配置编码器参数（可选，设备树已配置） */
-    // struct encoder_config cfg = {
-    //     .mode = ENCODER_MODE_RUNTIME,
-    //     .steps_per_revolution = 2000,
-    // };
-    // ret = encoder_configure(encoder1, &cfg);
-
     while (1) {
-        struct sensor_value val1, val2;
+        struct sensor_value val1_rotation, val2_rotation, val1_revolution, val2_revolution;
         double angle1, angle2;
         
         int rc;
@@ -35,9 +29,15 @@ int main(void)
             return 0;
         }
 
-        rc = sensor_channel_get(encoder1, SENSOR_CHAN_ROTATION, &val1);
+        rc = sensor_channel_get(encoder1, SENSOR_CHAN_ROTATION, &val1_rotation);
         if (rc != 0) {
-            printk("Failed to get data1 (%d)\n", rc);
+            printk("Failed to get val1_rotation (%d)\n", rc);
+            return 0;
+        }
+
+        rc = sensor_channel_get(encoder1, SENSOR_CHAN_REVOLUTIONS, &val1_revolution);
+        if (rc != 0) {
+            printk("Failed to get val1_revolution (%d)\n", rc);
             return 0;
         }
 
@@ -47,19 +47,24 @@ int main(void)
             return 0;
         }
 
-        rc = sensor_channel_get(encoder2, SENSOR_CHAN_ROTATION, &val2);
+        rc = sensor_channel_get(encoder2, SENSOR_CHAN_ROTATION, &val2_rotation);
         if (rc != 0) {
-            printk("Failed to get data2 (%d)\n", rc);
+            printk("Failed to get val2_rotation (%d)\n", rc);
+            return 0;
+        }
+
+        rc = sensor_channel_get(encoder2, SENSOR_CHAN_REVOLUTIONS, &val2_revolution);
+        if (rc != 0) {
+            printk("Failed to get val2_revolution (%d)\n", rc);
             return 0;
         }
 
         /* 计算角度和转速 */
-        angle1 = fmodf((float)val1.val1 + (float)val1.val2 / 1000000.0f, 2000.0f);
-        angle2 = fmodf((float)val2.val1 + (float)val2.val2 / 1000000.0f, 2000.0f);
+        angle1 = (val1_rotation.val1 + val1_rotation.val2 / 1000000.0f) + val1_revolution.val1 * 360;
+        angle2 = (val2_rotation.val1 + val2_rotation.val2 / 1000000.0f) + val2_revolution.val1 * 360;
 
         /* 通过串口打印结果 */
-        printk("TIM2_ENCODER: Angle: %.2f° | "
-               "TIM3_ENCODER: Angle: %.2f° \n",
+        printk("%.2f, %.2f\n",
                (double)angle1, (double)angle2);
 
         /* 每100ms更新一次 */
