@@ -1,1 +1,2 @@
 rsource "sensor/Kconfig"
+rsource "motor_driver/Kconfig"

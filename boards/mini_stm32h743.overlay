@@ -1,4 +1,7 @@
 #include <zephyr/dt-bindings/sensor/qdec_stm32.h>
+#include <zephyr/dt-bindings/pinctrl/stm32-pinctrl.h>
+#include <zephyr/dt-bindings/pwm/pwm.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
 
 / {
     aliases {
@@ -46,21 +49,33 @@
 	};
 };
 
-// &timers1 {
-//     status = "okay";
+&timers1 {
+    status = "okay";
 
-//     encoder1: encoder {
-//         label = "TIM1_ENCODER";
-//         compatible = "st,stm32-encoder";
-//         pinctrl-0 = <&tim1_ch1_pa8 &tim1_ch2_pe11>;
-// 		pinctrl-names = "default";
-// 		st,encoder-mode = <3>;
-//         st,input-filter-level = <NO_FILTER>;
-// 		st,counts-per-revolution = <500>;
-// 		st,input-polarity-inverted;
-//         status = "okay";
-//     };
-// };
+    pwm1: pwm {
+		status = "okay";
+		pinctrl-0 = <&tim1_ch1_pe9 &tim1_ch2_pe11>;
+		pinctrl-names = "default";
+	};
+
+	motor_controller: motor-controller {
+        compatible = "toshiba,tb6612fng";
+        status = "okay";
+
+        /* PWM配置 */
+		pwms = <&pwm1 1 PWM_USEC(20) PWM_POLARITY_NORMAL>, // TIM1_CH1 (PE9)
+			   <&pwm1 2 PWM_USEC(20) PWM_POLARITY_NORMAL>; // TIM1_CH2 (PE11)
+
+        /* GPIO配置 */
+        ain1-gpios = <&gpioc 4 GPIO_ACTIVE_HIGH>;  // 通道A方向1
+        ain2-gpios = <&gpioc 5 GPIO_ACTIVE_HIGH>;  // 通道A方向2
+        bin1-gpios = <&gpiob 0 GPIO_ACTIVE_HIGH>;  // 通道B方向1
+        bin2-gpios = <&gpiob 1 GPIO_ACTIVE_HIGH>;  // 通道B方向2
+        stby-gpios = <&gpiob 2 GPIO_ACTIVE_HIGH>;  // 待机控制
+
+		#pwm-cells = <3>;
+    };
+};
 
 &timers2 {
     status = "okay";

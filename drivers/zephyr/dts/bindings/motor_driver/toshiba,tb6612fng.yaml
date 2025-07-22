@@ -1,0 +1,79 @@
+# Copyright (c) 2025, Cody Gu <gujiaqi@iscas.ac.cn>
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  Toshiba TB6612FNG dual H-bridge motor driver controller.
+  This driver provides PWM control for two DC motors with direction control.
+
+  example:
+  - |
+    #include <dt-bindings/pwm/pwm.h>
+    #include <dt-bindings/gpio/gpio.h>
+
+    motor-controller {
+        compatible = "toshiba,tb6612fng";
+        
+        /* PWM */
+        pwms = <&pwm1 0 PWM_POLARITY_NORMAL>,
+               <&pwm1 1 PWM_POLARITY_NORMAL>;
+        pwm-period = <20000>;
+
+        /* GPIO */
+        ain1-gpios = <&gpiod 10 GPIO_ACTIVE_HIGH>;
+        ain2-gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
+        bin1-gpios = <&gpiod 12 GPIO_ACTIVE_HIGH>;
+        bin2-gpios = <&gpiod 13 GPIO_ACTIVE_HIGH>;
+        stby-gpios = <&gpiod 14 GPIO_ACTIVE_HIGH>;
+    };
+
+compatible: "toshiba,tb6612fng"
+
+include:
+  - name: base.yaml
+  
+properties:
+  pwms:
+    type: phandle-array
+    required: true
+    description: |
+      PWM specifiers for both motor channels (A & B).
+      Must contain exactly two PWM entries:
+        - Index 0: Channel A PWM
+        - Index 1: Channel B PWM
+
+  ain1-gpios:
+    type: phandle-array
+    required: true
+    description: GPIO for Channel A direction control 1
+
+  ain2-gpios:
+    type: phandle-array
+    required: true
+    description: GPIO for Channel A direction control 2
+
+  bin1-gpios:
+    type: phandle-array
+    required: true
+    description: GPIO for Channel B direction control 1
+
+  bin2-gpios:
+    type: phandle-array
+    required: true
+    description: GPIO for Channel B direction control 2
+
+  stby-gpios:
+    type: phandle-array
+    required: true
+    description: Standby control GPIO (active high)
+
+child-binding:
+  description: Motor channel nodes (optional)
+  properties:
+    channel:
+      type: int
+      required: true
+      description: |
+        Motor channel identifier:
+        - 0: Channel A
+        - 1: Channel B
+
