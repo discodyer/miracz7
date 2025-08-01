@@ -54,24 +54,24 @@ static void uart_fifo_callback(struct device *dev){
 
 bool zephyr_transport_open(struct uxrCustomTransport * transport){
     zephyr_transport_params_t * params = (zephyr_transport_params_t*) transport->args;
-
+    
     int ret;
     uint32_t baudrate, dtr = 0U;
 
-    params->uart_dev = device_get_binding("CDC_ACM_0");
+    params->uart_dev = device_get_binding("CDC_XRCE_DDS");
     if (!params->uart_dev) {
         printk("CDC ACM device not found\n");
         return false;
     }
 
-    ret = usb_enable(NULL);
-    if (ret != 0) {
-        printk("Failed to enable USB\n");
-        return false;
-    }
+    // ret = usb_enable(NULL);
+    // if (ret != 0) {
+    //     printk("Failed to enable USB\n");
+    //     return false;
+    // }
 
     ring_buf_init(&out_ringbuf, sizeof(uart_out_buffer), uart_out_buffer);
-    ring_buf_init(&in_ringbuf, sizeof(uart_in_buffer), uart_out_buffer);
+    ring_buf_init(&in_ringbuf, sizeof(uart_in_buffer), uart_in_buffer);
 
     printk("Waiting for agent connection\n");
 

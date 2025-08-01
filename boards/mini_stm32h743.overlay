@@ -50,3 +50,10 @@
 		gyro-fs = <1000>;
 	};
 };
+
+&zephyr_udc0 {
+	cdc_xrce_dds: cdc_xrce_dds {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "CDC_XRCE_DDS";
+	};
+};
