@@ -1,0 +1,21 @@
+manifest:
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    
+    - name: eprosima
+      url-base: https://github.com/eProsima
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: main
+      import: true
+
+    - name: Micro-XRCE-DDS-Client
+      remote: eprosima
+      revision: v3.0.0
+      path: modules/lib/Micro-XRCE-DDS-Client
+
+  self:
+    path: miracz7
