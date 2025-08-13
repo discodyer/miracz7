@@ -5,4 +5,8 @@ list(APPEND ZEPHYR_EXTRA_MODULES ${CMAKE_CURRENT_SOURCE_DIR}/modules/libmicroxrc
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(MiracZ7)
 
+if(CONFIG_MICROXRCEDDSCLIENT)
+  target_link_libraries(app PRIVATE microxrceddsclient)
+endif()
+
 target_sources(app PRIVATE src/main.c src/HelloWorld.c src/microxrce_transports.c)
