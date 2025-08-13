@@ -15,7 +15,7 @@ zephyr_get_compile_options_for_lang_as_string(           CXX options_cxx)
 set(external_project_cflags "${includes} -I${ZEPHYR_BASE}/include/posix ${definitions} ${options} ${system_includes}")
 set(external_project_cxxflags "${includes_cxx} ${definitions_cxx} ${options_cxx} ${system_includes_cxx}" )
 
-set(microxrceddsclient_src_dir   ${CMAKE_CURRENT_SOURCE_DIR}/../../../Micro-XRCE-DDS-Client)
+set(microxrceddsclient_src_dir   ${CMAKE_CURRENT_SOURCE_DIR}/../../../modules/lib/Micro-XRCE-DDS-Client)
 set(microxrceddsclient_build_dir ${CMAKE_CURRENT_BINARY_DIR})
 
 include(ExternalProject)
