@@ -6,6 +6,9 @@ manifest:
     - name: eprosima
       url-base: https://github.com/eProsima
 
+    - name: xrce-dds-custom
+      url-base: https://github.com/discodyer
+
   projects:
     - name: zephyr
       remote: zephyrproject-rtos
@@ -13,9 +16,14 @@ manifest:
       import: true
 
     - name: Micro-XRCE-DDS-Client
-      remote: eprosima
-      revision: v3.0.0
-      path: modules/lib/Micro-XRCE-DDS-Client
+      remote: xrce-dds-custom
+      revision: zephyr-v3.0.0
+      path: modules/lib/micro-xrce-dds-client
+    
+    - name: Micro-CDR
+      remote: xrce-dds-custom
+      revision: zephyr-v2.0.1
+      path: modules/lib/micro-cdr
 
   self:
     path: miracz7

@@ -1,0 +1,3 @@
+mainmenu "Miracz7 Application"
+
+source "Kconfig.zephyr"
