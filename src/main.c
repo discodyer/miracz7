@@ -1,6 +1,4 @@
 #include <zephyr/kernel.h>
-#include "HelloWorld.h"
-#include "microxrce_transports.h"
 
 #include <uxr/client/client.h>
 #include <ucdr/microcdr.h>
@@ -10,15 +8,17 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define STREAM_HISTORY  8
-#define BUFFER_SIZE     UXR_CONFIG_CUSTOM_TRANSPORT_MTU * STREAM_HISTORY
-
-void main(void)
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/sensor/encoder_stm32.h>
 #include <zephyr/drivers/motor.h>
+
+#include "HelloWorld.h"
+#include "microxrce_transports.h"
+
+#define STREAM_HISTORY  8
+#define BUFFER_SIZE     UXR_CONFIG_CUSTOM_TRANSPORT_MTU * STREAM_HISTORY
 
 #define MOTOR_DEVICE DT_NODELABEL(motor_controller)
 
@@ -69,7 +69,6 @@ void motor_thread(void *, void *, void *)
 
 int main(void)
 {
-
     /* 启动电机控制线程 */
     k_thread_create(&motor_thread_data,
                    motor_thread_stack,
