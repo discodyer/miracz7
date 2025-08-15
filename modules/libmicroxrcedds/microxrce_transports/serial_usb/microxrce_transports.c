@@ -15,7 +15,7 @@
 #include <zephyr/sys/ring_buffer.h>
 #include <zephyr/usb/usb_device.h>
 
-#define RING_BUF_SIZE 2048
+#define RING_BUF_SIZE CONFIG_USB_CDC_ACM_RINGBUF_SIZE
 
 char uart_in_buffer[RING_BUF_SIZE];
 char uart_out_buffer[RING_BUF_SIZE];

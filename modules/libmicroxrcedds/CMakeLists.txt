@@ -15,19 +15,18 @@ zephyr_get_compile_options_for_lang_as_string(           CXX options_cxx)
 set(external_project_cflags "${includes} -I${ZEPHYR_BASE}/include/posix ${definitions} ${options} ${system_includes}")
 set(external_project_cxxflags "${includes_cxx} ${definitions_cxx} ${options_cxx} ${system_includes_cxx}" )
 
-set(MICROXRCEDDSCLIENT_SRC_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/../../../modules/lib/Micro-XRCE-DDS-Client)
+# message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+# message(STATUS "ZEPHYR_MICRO_XRCE_DDS_CLIENT_MODULE_DIR = ${ZEPHYR_MICRO_XRCE_DDS_CLIENT_MODULE_DIR}")
+# message(STATUS "ZEPHYR_CURRENT_MODULE_DIR = ${ZEPHYR_CURRENT_MODULE_DIR}")
+# message(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
+set(MICROXRCEDDSCLIENT_SRC_DIR   ${ZEPHYR_MICRO_XRCE_DDS_CLIENT_MODULE_DIR})
 set(MICROXRCEDDSCLIENT_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
-# Configure transport options based on Kconfig
-if(CONFIG_MICROXRCEDDSCLIENT_CUSTOM_TRANSPORT)
-  set(UCLIENT_PROFILE_CUSTOM_TRANSPORT ON)
-  set(UCLIENT_PROFILE_TCP OFF)
-  set(UCLIENT_PROFILE_UDP OFF)
-  set(UCLIENT_PROFILE_SERIAL OFF)
-else()
-  set(UCLIENT_PROFILE_CUSTOM_TRANSPORT OFF)
-  # Add more transport options here if needed
-endif()
+# We only use custom transport
+set(UCLIENT_PROFILE_CUSTOM_TRANSPORT ON)
+set(UCLIENT_PROFILE_TCP OFF)
+set(UCLIENT_PROFILE_UDP OFF)
+set(UCLIENT_PROFILE_SERIAL OFF)
 
 include(ExternalProject)
 
@@ -49,6 +48,8 @@ ExternalProject_Add(
         -DUCLIENT_PROFILE_SERIAL:BOOL=${UCLIENT_PROFILE_SERIAL}
         -DUCLIENT_PROFILE_DISCOVERY:BOOL=OFF
         -DUCLIENT_PROFILE_CUSTOM_TRANSPORT:BOOL=${UCLIENT_PROFILE_CUSTOM_TRANSPORT}
+        -DUCLIENT_CUSTOM_TRANSPORT_MTU:STRING=${CONFIG_MICROXRCEDDSCLIENT_XRCE_DDS_MTU}
+        -DUXRCE_STREAM_HISTORY:STRING=${CONFIG_MICROXRCEDDSCLIENT_XRCE_DDS_HISTORIC}
         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_CURRENT_SOURCE_DIR}/zephyr_toolchain.cmake
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}
         -DCMAKE_PREFIX_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}
@@ -60,9 +61,37 @@ zephyr_library_import(libmicroxrceddsclient ${CMAKE_CURRENT_BINARY_DIR}/lib/libm
 zephyr_library_import(libmicrocdr ${CMAKE_CURRENT_BINARY_DIR}/lib/libmicrocdr.a)
 
 zephyr_interface_library_named(microxrceddsclient)
+
 add_dependencies(microxrceddsclient libmicroxrceddsclient)
 add_dependencies(microxrceddsclient libmicrocdr)
 add_dependencies(microxrceddsclient libmicroxrceddsclient_project)
-target_include_directories(microxrceddsclient INTERFACE ${MICROXRCEDDSCLIENT_BUILD_DIR}/include)
+target_include_directories(microxrceddsclient INTERFACE 
+  ${MICROXRCEDDSCLIENT_SRC_DIR}/include
+  ${MICROXRCEDDSCLIENT_BUILD_DIR}/include
+)
+
+# Micro-XRCE-DDS-Client transport library
+
+if(CONFIG_MICROXRCEDDSCLIENT_TRANSPORT_SERIAL)
+    set(MICROXRCEDDSCLIENT_TRANSPORT_DIR ${ZEPHYR_CURRENT_MODULE_DIR}/microxrce_transports/serial)
+elseif(CONFIG_MICROXRCEDDSCLIENT_TRANSPORT_SERIAL_USB)
+    set(MICROXRCEDDSCLIENT_TRANSPORT_DIR ${ZEPHYR_CURRENT_MODULE_DIR}/microxrce_transports/serial_usb)
+elseif(CONFIG_MICROXRCEDDSCLIENT_TRANSPORT_UDP)
+    set(MICROXRCEDDSCLIENT_TRANSPORT_DIR ${ZEPHYR_CURRENT_MODULE_DIR}/microxrce_transports/udp)
+else()
+    message(FATAL_ERROR "Please set a micro-ROS transport")
+endif()
+
+zephyr_library_named(microxrce_transports)
+zephyr_include_directories(${MICROXRCEDDSCLIENT_SRC_DIR}/include)
+zephyr_include_directories(${MICROXRCEDDSCLIENT_BUILD_DIR}/include)
+zephyr_include_directories(${MICROXRCEDDSCLIENT_TRANSPORT_DIR})
+
+zephyr_library_sources(
+   ${MICROXRCEDDSCLIENT_TRANSPORT_DIR}/microxrce_transports.c
+)
+
+add_dependencies(microxrceddsclient microxrce_transports)
+add_dependencies(microxrce_transports libmicroxrceddsclient_project)
 
 endif()

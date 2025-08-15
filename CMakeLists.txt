@@ -9,4 +9,4 @@ if(CONFIG_MICROXRCEDDSCLIENT)
   target_link_libraries(app PRIVATE microxrceddsclient)
 endif()
 
-target_sources(app PRIVATE src/main.c src/HelloWorld.c src/microxrce_transports.c)
+target_sources(app PRIVATE src/main.c src/HelloWorld.c)
