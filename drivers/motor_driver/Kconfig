@@ -1,0 +1,29 @@
+menuconfig MOTOR_DRIVER
+    bool "Motor driver support"
+    help
+      Enable support for motor drivers
+
+if MOTOR_DRIVER
+
+config MOTOR_DRIVER_LOG_LEVEL
+    int "Motor driver log level"
+    depends on LOG
+    default 3
+    help
+      Set log level for motor drivers.
+
+config MOTOR_DRIVER_INIT_PRIORITY
+    int "TB6612 driver initialization priority"
+    default 80
+    range 0 99
+    help
+      Driver initialization priority for TB6612 drivers.
+	  Must be higher than PWM and GPIO controllers priorities.
+
+module = MOTOR
+module-str = motor
+source "subsys/logging/Kconfig.template.log_config"
+
+rsource "tb6612/Kconfig.tb6612"
+
+endif

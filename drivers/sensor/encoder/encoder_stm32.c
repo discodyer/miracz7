@@ -104,7 +104,7 @@ static int encoder_stm32_get(const struct device *dev, enum sensor_channel chan,
 			  struct sensor_value *val)
 {
 	struct encoder_stm32_dev_data *const dev_data = dev->data;
-	const struct encoder_stm32_dev_cfg *dev_cfg = dev->config;
+	// const struct encoder_stm32_dev_cfg *dev_cfg = dev->config;
 
 	if (chan == SENSOR_CHAN_ROTATION) {
 		val->val1 = dev_data->position >> 6;
@@ -128,6 +128,7 @@ static int encoder_stm32_get(const struct device *dev, enum sensor_channel chan,
 static int encoder_stm32_initialize(const struct device *dev)
 {
 	const struct encoder_stm32_dev_cfg *const dev_cfg = dev->config;
+	struct encoder_stm32_dev_data *const dev_data = dev->data;
 	int retval;
 	LL_TIM_ENCODER_InitTypeDef init_props;
 
@@ -196,6 +197,9 @@ static int encoder_stm32_initialize(const struct device *dev)
 
 	LL_TIM_SetCounter(dev_cfg->timer_inst, 0);
 	LL_TIM_EnableCounter(dev_cfg->timer_inst);
+
+	dev_data->position = 0;
+	dev_data->revolutions = 0;
 
 	return 0;
 }

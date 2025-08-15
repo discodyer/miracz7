@@ -1,0 +1,13 @@
+# Copyright (c) 2025, Cody Gu <gujiaqi@iscas.ac.cn>
+# SPDX-License-Identifier: Apache-2.0
+#
+
+DT_COMPAT_TB6612FNG := toshiba,tb6612fng
+
+config MOTOR_DRIVER_TB6612
+	bool "TB6612 Dual H-bridge Motor driver"
+	default $(dt_compat_enabled,$(DT_COMPAT_TB6612FNG))
+	select PINCTRL
+	select PWM
+	help
+	  TB6612 Dual H-bridge Motor driver.
